@@ -132,9 +132,11 @@ export class StandardDataType extends Contextable {
     public typeName = '',
     public isDefsType = false,
     /** 指向类的第几个模板，-1 表示没有 */
-    public templateIndex = -1
+    public templateIndex = -1,
+    public name = ''
   ) {
     super();
+    this.name = name;
   }
 
   static constructorWithEnum(enums: Array<string | number> = []) {
@@ -202,14 +204,37 @@ export class StandardDataType extends Contextable {
     if (this.enum.length) {
       return this.getEnumType();
     }
-
-    const name = this.getDefName(originName);
-
+    const typeName = this.getDefName(originName);
     if (this.typeArgs.length) {
-      return `${name}<${this.typeArgs.map(arg => arg.generateCode(originName)).join(', ')}>`;
+      if (typeName === 'ObjectMap') {
+        return this.generateObjCode(originName, this.typeArgs);
+      }
+      return `${typeName}<${this.generateArrayCode(originName, this.typeArgs)}>`;
     }
 
-    return name || 'any';
+    return typeName || 'any';
+  }
+
+  generateArrayCode(originName = '', typeArgs = [] as StandardDataType[]) {
+    const result: any[] = [];
+    typeArgs.map(arg => {
+      result.push(this.generateObjCode(originName, arg.typeArgs));
+    });
+    return result;
+  }
+
+  generateObjCode(originName = '', typeArgs = [] as StandardDataType[]) {
+    let resultStr = '{';
+    for (const item of typeArgs) {
+      if (!item.name) {
+        continue;
+      }
+      let itemType = item.generateCode(originName);
+      itemType = itemType === 'array' ? 'Array<any>' : itemType;
+      resultStr += `"${item.name}":${itemType},`;
+    }
+    resultStr += '}';
+    return `${resultStr}`;
   }
 
   getInitialValue(usingDef = true) {

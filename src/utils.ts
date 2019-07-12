@@ -10,8 +10,8 @@ import { Manager } from './manage';
 import { OriginType } from './scripts';
 
 const defaultTemplateCode = `
-import * as Pont from 'pont-engine';
-import { CodeGenerator, Interface } from "pont-engine";
+import * as Pont from '@yued/pont-engine';
+import { CodeGenerator, Interface } from "@yued/pont-engine";
 
 export class FileStructures extends Pont.FileStructures {
 }
@@ -21,7 +21,7 @@ export default class MyGenerator extends CodeGenerator {
 `;
 
 const defaultTransformCode = `
-import { StandardDataSource } from "pont-engine";
+import { StandardDataSource } from "@yued/pont-engine";
 
 export default function(dataSource: StandardDataSource): StandardDataSource {
   return dataSource;

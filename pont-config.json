@@ -1,0 +1,4 @@
+{
+  "originUrl": "http://127.0.0.1:8181/static/swagger-after-proxy.json",
+  "outDir": "./api/services"
+}

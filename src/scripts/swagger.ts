@@ -65,6 +65,7 @@ class Schema {
   enum?: string[];
   type: SwaggerType;
   additionalProperties?: Schema;
+  properties?: Schema;
   items: {
     type?: SwaggerType;
     $ref?: string;
@@ -144,6 +145,94 @@ class Schema {
 
     return new StandardDataType([], typeName, false);
   }
+
+  static parseResponsesSchema2StandardDataType(
+    schema: Schema,
+    defNames: string[],
+    classTemplateArgs = [] as StandardDataType[],
+    attrName?: string
+  ) {
+    const { items, $ref, type, properties } = schema;
+    let typeName = schema.type as string;
+
+    if (type === 'array') {
+      let itemsType = _.get(items, 'type', '');
+      const itemsRef = _.get(items, '$ref', '');
+
+      if (itemsType) {
+        if (itemsType === 'integer') {
+          itemsType = 'number';
+        }
+
+        if (itemsType === 'file') {
+          itemsType = 'File';
+        }
+        let args: any[] = [];
+        if (itemsType === 'object') {
+          Object.keys((items as any).properties).forEach(key => {
+            args.push(
+              Schema.parseResponsesSchema2StandardDataType(
+                (items as any).properties[key] as any,
+                defNames,
+                classTemplateArgs,
+                key
+              )
+            );
+          });
+        }
+        let contentType = new StandardDataType(args, itemsType, false, -1, attrName);
+
+        if (itemsType === 'array') {
+          contentType = new StandardDataType([new StandardDataType()], 'Array', false, -1, attrName);
+        }
+
+        return new StandardDataType([contentType], 'Array', false, -1, attrName);
+      }
+
+      if (itemsRef) {
+        const ast = compileTemplate(itemsRef);
+        const contentType = parseAst2StandardDataType(ast, defNames, classTemplateArgs);
+
+        return new StandardDataType([contentType], 'Array', false, -1, attrName);
+      }
+    }
+
+    if (typeName === 'integer') {
+      typeName = 'number';
+    }
+
+    if (typeName === 'file') {
+      typeName = 'File';
+    }
+
+    if ($ref) {
+      const ast = compileTemplate($ref);
+
+      if (!ast) {
+        return new StandardDataType();
+      }
+
+      return parseAst2StandardDataType(ast, defNames, classTemplateArgs);
+    }
+
+    if (schema.enum) {
+      return StandardDataType.constructorWithEnum(parseSwaggerEnumType(schema.enum));
+    }
+
+    if (type === 'object') {
+      if (properties) {
+        const typeArgs: any[] = [];
+        Object.keys(properties).forEach(key => {
+          typeArgs.push(
+            Schema.parseResponsesSchema2StandardDataType((properties as any)[key], defNames, classTemplateArgs, key)
+          );
+        });
+        return new StandardDataType(typeArgs, 'ObjectMap', false, -1, attrName);
+      }
+    }
+
+    return new StandardDataType([], typeName, false, -1, attrName);
+  }
 }
 
 export function parseSwaggerEnumType(enumStrs: string[]) {
@@ -208,7 +297,7 @@ class SwaggerInterface {
     }
 
     const responseSchema = _.get(inter, 'responses.200.schema', {}) as Schema;
-    const response = Schema.parseSwaggerSchema2StandardDataType(responseSchema, defNames);
+    const response = Schema.parseResponsesSchema2StandardDataType(responseSchema, defNames);
 
     const parameters = (inter.parameters || []).map(param => {
       let paramSchema: Schema;
