@@ -1,1 +1,1 @@
-require('@yued/pont-engine');
+require('./bin/init');
