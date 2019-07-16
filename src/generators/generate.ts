@@ -213,7 +213,7 @@ export class CodeGenerator {
 
       export type Response = ${inter.responseType};
       export const init: Response;
-      export function request(${requestParams}): Promise<${inter.responseType}>;
+      export function request(${requestParams}): Promise<Response>;
       export const url = "${inter.path}";
     `;
   }

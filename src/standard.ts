@@ -218,7 +218,7 @@ export class StandardDataType extends Contextable {
   generateArrayCode(originName = '', typeArgs = [] as StandardDataType[]) {
     const result: any[] = [];
     typeArgs.map(arg => {
-      result.push(this.generateObjCode(originName, arg.typeArgs));
+      result.push(arg.isDefsType ? arg.generateCode(originName) : this.generateObjCode(originName, arg.typeArgs));
     });
     return result;
   }
