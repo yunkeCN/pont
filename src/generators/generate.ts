@@ -214,6 +214,7 @@ export class CodeGenerator {
       export type Response = ${inter.responseType};
       export const init: Response;
       export function request(${requestParams}): Promise<${inter.responseType}>;
+      export const url = "${inter.path}";
     `;
   }
 
@@ -328,7 +329,6 @@ export class CodeGenerator {
   getInterfaceContent(inter: Interface) {
     const bodyParmas = inter.getBodyParamsCode();
     const requestParams = bodyParmas ? `params, bodyParams` : `params`;
-
     return `
     /**
      * @desc ${inter.description}
@@ -347,6 +347,7 @@ export class CodeGenerator {
         method: '${inter.method}',
       });
     }
+    export const url = "${inter.path}";
    `;
   }
 

@@ -370,7 +370,7 @@ export class SwaggerDataSource {
       description: string;
       required?: string[];
       properties: { [key in string]: SwaggerProperty };
-    }
+    };
   };
 }
 
@@ -392,7 +392,7 @@ export function parseSwaggerMods(swagger: SwaggerDataSource, defNames: string[],
     }
 
     _.forEach(pathItemObject as Omit<SwaggerPathItemObject, 'parameters'>, (inter, method) => {
-      inter.path = path;
+      inter.path = (swagger as any).basePath + path;
       inter.method = method;
       allSwaggerInterfaces.push(inter);
     });

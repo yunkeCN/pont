@@ -1,4 +1,4 @@
 {
-  "originUrl": "http://127.0.0.1:8181/static/swagger-after-proxy.json",
+  "originUrl": "http://api.myscrm.cn:7001/",
   "outDir": "./api/services"
 }
