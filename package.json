@@ -1,6 +1,6 @@
 {
   "name": "@yued/pont-engine",
-  "version": "0.2.14",
+  "version": "0.2.16",
   "description": "pont swagger typescript API",
   "main": "lib/index.js",
   "typings": "src/index.ts",
@@ -15,7 +15,7 @@
     "tsc": "tsc"
   },
   "dependencies": {
-    "@yued/pont-engine": "^0.2.14",
+    "@yued/pont-engine": "^0.2.16",
     "chalk": "^2.3.0",
     "commander": "^2.19.0",
     "fs-extra": "^5.0.0",

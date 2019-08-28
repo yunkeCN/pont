@@ -211,8 +211,9 @@ class Schema {
       if (!ast) {
         return new StandardDataType();
       }
-
-      return parseAst2StandardDataType(ast, defNames, classTemplateArgs);
+      const refDataType = parseAst2StandardDataType(ast, defNames, classTemplateArgs);
+      refDataType.name = attrName;
+      return refDataType;
     }
 
     if (schema.enum) {

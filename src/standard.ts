@@ -10,6 +10,8 @@ export enum PrimitiveType {
   boolean = 'boolean'
 }
 
+const ORIGINAL_DATA_TYPE = ['string', 'boolean', 'number'];
+
 class Contextable {
   getDsName() {
     const context = this.getContext();
@@ -208,6 +210,11 @@ export class StandardDataType extends Contextable {
     if (this.typeArgs.length) {
       if (typeName === 'ObjectMap') {
         return this.generateObjCode(originName, this.typeArgs);
+      }
+      // 数组类型
+      const { typeName: name } = this.typeArgs[0];
+      if (ORIGINAL_DATA_TYPE.includes(name)) {
+        return `${name}[]`;
       }
       return `${typeName}<${this.generateArrayCode(originName, this.typeArgs)}>`;
     }

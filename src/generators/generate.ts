@@ -343,7 +343,7 @@ export class CodeGenerator {
     export async function request(${requestParams}) {
       return pontFetch({
         url: '${inter.path}',
-        ${bodyParmas ? 'params: bodyParams' : 'params'},
+        ${bodyParmas ? 'params: bodyParams,query:params' : 'params'},
         method: '${inter.method}',
       });
     }

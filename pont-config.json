@@ -1,4 +1,4 @@
 {
-  "originUrl": "http://api.myscrm.cn:7001/",
+  "originUrl": "http://120.25.65.21:7001",
   "outDir": "./api/services"
 }
